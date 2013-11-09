@@ -35,6 +35,3 @@ nosetests.xml
 .project
 .pydevproject
 
-#Other
-*.txt
-*.png
