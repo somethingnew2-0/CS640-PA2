@@ -1,0 +1,24 @@
+# After cloning https://bitbucket.org/huangty/cs144_bufferbloat.git
+# Change this code in bufferbloat.py
+        # Create switch and host nodes
+        for i in xrange(n):
+            self.add_node( 'h%d' % (i+1), cpu=cpu )
+
+        self.add_switch('s0', fail_mode='open')
+
+        
+        self.add_link('h1', 's0', bw=bw_host,
+                      max_queue_size=int(maxq) )
+# to this
+        for i in xrange(n):
+            self.addHost( 'h%d' % (i+1), cpu=cpu )
+
+        self.addSwitch('s0', fail_mode='open')
+
+        
+        self.addLink('h1', 's0', bw=bw_host,
+                      max_queue_size=int(maxq) )
+
+# Then run this
+sudo apt-get install python-dev python-pip
+sudo pip install matplotlib
