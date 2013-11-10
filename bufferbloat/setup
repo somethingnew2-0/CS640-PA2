@@ -20,5 +20,5 @@
                       max_queue_size=int(maxq) )
 
 # Then run this
-sudo apt-get install python-dev python-pip
+sudo apt-get install python-dev python-pip sl
 sudo pip install matplotlib
