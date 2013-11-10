@@ -12,7 +12,7 @@ import random
 class Mesh7pro( Topo ):
     "Mesh topology, by default 20 switches and 2 hosts per switch"
 
-    def __init__( self, X = 20, Y = 2):
+    def __init__( self, X = 2, Y = 2):
 
         # Initialize topology
         Topo.__init__( self )

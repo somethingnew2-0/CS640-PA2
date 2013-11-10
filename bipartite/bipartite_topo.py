@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from mininet.topo import Topo
-from mininet.node import CPULimitedHost
+from mininet.node import CPULimitedHost, Controller
 from mininet.link import TCLink
 from mininet.net import Mininet
 from mininet.log import lg, info
@@ -66,6 +66,11 @@ class BipartiteTopo(Topo):
         for i in range(n):
             hosts.append(self.addHost('h'+str(i+1)))
             self.addLink(switches[i/2], hosts[i])
+
+class BipartiteController(Controller):
+    def __init__( self,
+                  **kwargs ):
+        Controller.__init__(**kwargs)
 
 def test():
     topo = BipartiteTopo()
