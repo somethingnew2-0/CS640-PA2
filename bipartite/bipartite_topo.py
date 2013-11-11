@@ -135,7 +135,7 @@ def test():
     #dumpNodeAddresses(net.switches)
     net.pingAll()
     perf(net)
-    CLI(net)
+    #CLI(net)
     net.stop()
     
 if __name__ == '__main__':
