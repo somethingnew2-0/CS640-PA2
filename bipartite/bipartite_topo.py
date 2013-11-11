@@ -24,10 +24,8 @@ class BipartiteTopo(Topo):
 
         # Link up switches in complete bipartite fashion
         for i in range(n/4):
-            self.addLink(switches[0], switches[i+n/4], bw=bw, delay=delay, max_queue_size=maxq, loss=loss)
-
-        for i in range(1,n/4):
-            self.addLink(switches[n/4], switches[i], bw=bw, delay=delay, max_queue_size=maxq, loss=loss)
+            for j in range(n/4):
+                self.addLink(switches[i], switches[j+n/4], bw=bw, delay=delay, max_queue_size=maxq, loss=loss)
 
         # Create hosts and add links to switches
         hosts = []
