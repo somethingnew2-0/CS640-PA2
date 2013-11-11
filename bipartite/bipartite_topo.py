@@ -10,46 +10,9 @@ from mininet.cli import CLI
 
 from argparse import ArgumentParser
 
-# Parse arguments
-parser = ArgumentParser(description="Bipartite Topology")
-parser.add_argument('-n',
-                    dest="half_switches",
-                    type=int,
-                    action="store",
-                    help="Number of switches on each side of the bipartite topology",
-                    required=True)
-
-parser.add_argument('-b',
-                    dest="bandwidth",
-                    type=float,
-                    action="store",
-                    help="Bandwidth of network link",
-                    default=10)
-parser.add_argument('-d',
-                    dest="delay",
-                    type=float,
-                    help="Delay in milliseconds of host links",
-                    default=0)
-parser.add_argument('-l',
-                    dest="loss",
-                    type=float,
-                    action="store",
-                    help="Packet loss percentage",
-                    default=0)
-
-parser.add_argument('-q',
-                    dest="max_queue",
-                    type=int,
-                    action="store",
-                    help="Max buffer size of network interface in packets",
-                    default=100)
-
-# Bipartite parameters
-args = parser.parse_args()
-
 class BipartiteTopo(Topo):
     # Bipartite topology
-    def __init__(self, n=args.half_switches*4, bw_net=args.bandwidth, delay='%sms' % args.delay, maxq=args.max_queue, loss=None):
+    def __init__(self, n, bw_net, delay, maxq, loss):
         super(BipartiteTopo, self ).__init__()
 
         switches = []
@@ -67,13 +30,45 @@ class BipartiteTopo(Topo):
             hosts.append(self.addHost('h'+str(i+1)))
             self.addLink(switches[i/2], hosts[i])
 
-class BipartiteController(Controller):
-    def __init__( self,
-                  **kwargs ):
-        Controller.__init__(**kwargs)
-
 def test():
-    topo = BipartiteTopo()
+    # Parse arguments
+    parser = ArgumentParser(description="Bipartite Topology")
+    parser.add_argument('-n',
+                    dest="half_switches",
+                    type=int,
+                    action="store",
+                    help="Number of switches on each side of the bipartite topology",
+                    required=True)
+
+    parser.add_argument('-b',
+                    dest="bandwidth",
+                    type=float,
+                    action="store",
+                    help="Bandwidth of network link",
+                    default=10)
+    parser.add_argument('-d',
+                    dest="delay",
+                    type=float,
+                    help="Delay in milliseconds of host links",
+                    default=0)
+    parser.add_argument('-l',
+                    dest="loss",
+                    type=float,
+                    action="store",
+                    help="Packet loss percentage",
+                    default=0)
+
+    parser.add_argument('-q',
+                    dest="max_queue",
+                    type=int,
+                    action="store",
+                    help="Max buffer size of network interface in packets",
+                    default=100)
+
+    # Bipartite parameters
+    args = parser.parse_args()
+
+    topo = BipartiteTopo(n=args.half_switches*4, bw_net=args.bandwidth, delay='%sms' % args.delay, maxq=args.max_queue, loss=None)
     net = Mininet(topo=topo, link=TCLink, host=CPULimitedHost)
     net.start()
     dumpNodeConnections(net.hosts)
@@ -81,6 +76,7 @@ def test():
     CLI(net)
     net.stop()
     
-#def connectAllHosts():
 if __name__ == '__main__':
     test()
+
+topos = { 'bipartitetopo': ( lambda: BipartiteTopo(n=2*4, bw_net=10, delay='%sms' % 0, maxq=100, loss=0) ) }
