@@ -16,25 +16,24 @@ from time import sleep
 
 class BipartiteTopo(Topo):
     # Bipartite topology
-    def __init__(self, n, bw_net, delay, maxq, loss):
+    def __init__(self, n, bw, delay, maxq, loss):
         super(BipartiteTopo, self ).__init__()
-
         switches = []
         for i in range(n/2):
             switches.append(self.addSwitch('s'+str(i+1)))
 
         # Link up switches in complete bipartite fashion
         for i in range(n/4):
-            self.addLink(switches[0], switches[i+n/4])
+            self.addLink(switches[0], switches[i+n/4], bw=bw, delay=delay, max_queue_size=maxq, loss=loss)
 
         for i in range(1,n/4):
-            self.addLink(switches[n/4], switches[i])
+            self.addLink(switches[n/4], switches[i], bw=bw, delay=delay, max_queue_size=maxq, loss=loss)
 
         # Create hosts and add links to switches
         hosts = []
         for i in range(n):
             hosts.append(self.addHost('h'+str(i+1)))
-            self.addLink(switches[i/2], hosts[i])
+            self.addLink(switches[i/2], hosts[i], bw=bw, delay=delay, max_queue_size=maxq, loss=loss)
 
 def dumpNodeAddresses( nodes ):
     "Dump addresses to/from nodes."
@@ -67,7 +66,7 @@ def perf( net, hosts=None ):
     if not hosts:
         hosts = net.hosts
         output( '*** Perf: testing performance\n' )
-    for node in hosts:
+    for node in hosts[:-1]:
         output( '%s -> ' % node.name )
         node.cmd( 'killall -9 iperf' )
         node.sendCmd('./iperf.sh s', printPid=True)
@@ -76,7 +75,7 @@ def perf( net, hosts=None ):
             node.monitor()
         nodeLastPid = node.lastPid
         for dest in hosts:
-            if node != dest:
+            if hosts.index(node) < hosts.index(dest):
                 while 'Connected' not in dest.cmd('sh -c "echo A | telnet -e A %s 5001"' % node.IP()):
                     #output( 'waiting %s %s\n' % (node.name, dest.name ))
                     sleep(.5)
@@ -126,7 +125,7 @@ def test():
     args = parser.parse_args()
 
 
-    topo = BipartiteTopo(n=args.half_switches*4, bw_net=args.bandwidth, delay='%sms' % args.delay, maxq=args.max_queue, loss=None)
+    topo = BipartiteTopo(n=args.half_switches*4, bw=args.bandwidth, delay='%sms' % args.delay, maxq=args.max_queue, loss=args.loss)
     net = Mininet(topo=topo, link=TCLink, host=CPULimitedHost)
     #for switch in net.switches:
     #    switch.setIP('10.1.0.'+str(net.switches.index(switch)+1))
@@ -142,4 +141,4 @@ def test():
 if __name__ == '__main__':
     test()
 
-topos = { 'bipartitetopo': ( lambda n, b=10, d=3, q=100, l=5: BipartiteTopo(n=n*4, bw_net=b, delay='%sms' % d, maxq=q, loss=l) ) }
+topos = { 'bipartitetopo': ( lambda n, b=10, d=3, q=100, l=5: BipartiteTopo(n=n*4, bw=b, delay='%sms' % d, maxq=q, loss=l) ) }
