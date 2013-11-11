@@ -52,13 +52,13 @@ def test():
                     dest="delay",
                     type=float,
                     help="Delay in milliseconds of host links",
-                    default=0)
+                    default=3)
     parser.add_argument('-l',
                     dest="loss",
                     type=float,
                     action="store",
                     help="Packet loss percentage",
-                    default=0)
+                    default=5)
 
     parser.add_argument('-q',
                     dest="max_queue",
@@ -82,4 +82,4 @@ def test():
 if __name__ == '__main__':
     test()
 
-topos = { 'bipartitetopo': ( lambda: BipartiteTopo(n=2*4, bw_net=10, delay='%sms' % 0, maxq=100, loss=0) ) }
+topos = { 'bipartitetopo': ( lambda n, b=10, d=3, q=100, l=5: BipartiteTopo(n=n*4, bw_net=b, delay='%sms' % d, maxq=q, loss=l) ) }
