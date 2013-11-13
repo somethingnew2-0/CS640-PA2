@@ -22,10 +22,11 @@ class BipartiteTopo(Topo):
         for i in range(n/2):
             switches.append(self.addSwitch('s'+str(i+1)))
 
-        # Link up switches in complete bipartite fashion
+        # Link up switches in loop-free bipartite fashion
         for i in range(n/4):
-            for j in range(n/4):
-                self.addLink(switches[i], switches[j+n/4], bw=bw, delay=delay, max_queue_size=maxq, loss=loss)
+            self.addLink(switches[i], switches[i+n/4], bw=bw, delay=delay, max_queue_size=maxq, loss=loss)
+        for i in range(n/4, n/2-1):
+            self.addLink(switches[i], switches[i-(n/4)+1], bw=bw, delay=delay, max_queue_size=maxq, loss=loss)
 
         # Create hosts and add links to switches
         hosts = []
