@@ -34,6 +34,13 @@ class BipartiteTopo(Topo):
             hosts.append(self.addHost('h'+str(i+1)))
             self.addLink(switches[i/2], hosts[i], bw=bw, delay=delay, max_queue_size=maxq, loss=loss)
 
+def dumpLinks( topo ):
+    "Dump the link connections and their bandwidths."
+    output("Links:\n")
+    links = topo.links()
+    for li in links:
+        output('('+li[0]+","+li[1]+") with bandwidth "+str(topo.linkInfo(li[0],li[1])['bw'])+"Mbps\n")
+
 def dumpNodeAddresses( nodes ):
     "Dump addresses to/from nodes."
 
@@ -129,10 +136,11 @@ def test():
     #for switch in net.switches:
     #    switch.setIP('10.1.0.'+str(net.switches.index(switch)+1))
     net.start()
-    dumpNetConnections(net)
+    #dumpNetConnections(net)
+    net.pingAll()
+    dumpLinks(topo)
     dumpNodeAddresses(net.hosts)
     #dumpNodeAddresses(net.switches)
-    net.pingAll()
     #perf(net)
     CLI(net)
     net.stop()
