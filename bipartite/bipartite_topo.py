@@ -41,16 +41,24 @@ def dumpLinks( topo ):
     for li in links:
         output('('+li[0]+","+li[1]+") with bandwidth "+str(topo.linkInfo(li[0],li[1])['bw'])+"Mbps\n")
 
+def dumpNodeIPs( nodes ):
+    "Dump IP addresses of nodes"
+    
+    for node in nodes:
+        output(node.name+" has IP address "+node.IP()+"\n")
+
 def dumpNodeAddresses( nodes ):
-    "Dump addresses to/from nodes."
+    "Dump IP and MAC addresses of nodes."
 
     for node in nodes:
-        output("Host "+node.name+" has IP address "+node.IP()+" and MAC address "+node.MAC()+"\n")
+        output(node.name+" has IP address "+node.IP()+" and MAC address "+node.MAC()+"\n")
 
 def dumpNetAddresses( net ):
     "Dump addresses in network"
-    nodes = net.controllers + net.switches + net.hosts
-    dumpNodeAddresses( nodes )
+    output("Nodes:\n")
+    nodes = net.controllers + net.switches
+    dumpNodeIPs(nodes)
+    dumpNodeAddresses(net.hosts)
 
 def _parsePerf( perfOutput ):
     """Parse perf output and return bandwidth.
@@ -139,8 +147,7 @@ def test():
     #dumpNetConnections(net)
     net.pingAll()
     dumpLinks(topo)
-    dumpNodeAddresses(net.hosts)
-    #dumpNodeAddresses(net.switches)
+    dumpNetAddresses(net)
     #perf(net)
     CLI(net)
     net.stop()
