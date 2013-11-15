@@ -144,9 +144,8 @@ def test():
     #for switch in net.switches:
     #    switch.setIP('10.1.0.'+str(net.switches.index(switch)+1))
     net.start()
-    #dumpNetConnections(net)
     net.pingAll()
-    dumpLinks(topo)
+    dumpLinks(net.topo)
     dumpNetAddresses(net)
     #perf(net)
     CLI(net)
