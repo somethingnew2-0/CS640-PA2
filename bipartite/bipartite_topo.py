@@ -100,6 +100,18 @@ def perf( net, hosts=None ):
         node.waitOutput()
         node.cmd( 'killall -9 iperf' )
 
+def perfSetup( net ):
+    "Set up iperf servers on all hosts"
+    hosts = net.hosts
+    for node in hosts:
+        node.cmd('iperf -s -w 16m -p 5001 -i 1 > iperf-recv.txt &')
+
+def perfTakedown( net ):
+    "kill all iperf servers running"
+    hosts = net.hosts
+    for node in hosts:
+        node.cmd('killall -9 iperf')
+
 def test():
     # Parse arguments
     parser = ArgumentParser(description="Bipartite Topology")
@@ -147,8 +159,10 @@ def test():
     net.pingAll()
     dumpLinks(net.topo)
     dumpNetAddresses(net)
+    perfSetup(net)
     #perf(net)
     CLI(net)
+    perfTakedown(net)
     net.stop()
     
 if __name__ == '__main__':
