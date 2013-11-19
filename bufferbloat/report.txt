@@ -1,0 +1,34 @@
+Bufferbloat report
+
+Part 2:
+1.039s wget time
+
+Part 3:
+Ping avg: 707ms
+4.315s wget time
+
+Why does the web page take so much longer to download?
+It is receiving the file over the same connection that we have a high speed TCP connection, video stream, on which is filling the buffers. Getting the web page uses the same connection, so it is slower because the packets may be dropped or have a longer processing time.
+
+Part 4:
+Ping avg: 20ms
+4.450s wget time
+
+Part 5 First part:
+wget before iperf: 1.0s
+Ping avg before iperf: 20ms
+
+Ping avg after iperf: 138ms
+wget after iperf: 2.700s
+
+Why does reducing the queue size reduce the download time for wget?
+When you put it on a larger queue all packets get delayed due to bufferbloat. Packets from the high speed connection are delaying packets from the single wget command because it has to wait for more packets in the queue.
+
+Part 5 Different Queues:
+wget before iperf: 1.0s
+Ping avg before iperf: 20ms
+
+wget after iperf: 2.000s
+Ping avg after iperf: 20ms
+
+The ping remains the same for before and after iperf, but wget still takes twice as long.

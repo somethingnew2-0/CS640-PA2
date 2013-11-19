@@ -1,0 +1,50 @@
+Project 2 Demo Form:
+
+General Info
+****************************
+Group member <first and last name, CS login>
+
+1) Cory Groom, groom
+
+2) Peter Collins, pcollins
+
+Tests
+*****************************
+The below tests should be done at one of the machines in the mumble lab (CS 1350) or on your own system using the version of the code that you submitted to the handin directory (or the closest to the version that you submitted).
+
+Be sure to answer the questions included with each test below
+
+Test 1:
+
+mininet> bipartite_topo.py -n 1 
+
+This test should result in ping test being run between all four nodes in the most simple bipartite graph topology using the default performance settings.  The test should also result in a print out the IP address assignments for all four of the host nodes in the network.
+
+Q1:  What were the min/avg/max delays of the pings?  25.637000/36.044750/39.919000
+
+Q2:  Were any packets lost (Y/N)?  If so, how many?  Yes. 2.
+
+
+Test 2:
+
+mininet> bipartite_topo.py -n 3 -b 5, -d 20 -l 10 -q 4
+
+This test should result in a ping test between the 12 nodes that are attached to the six switches in the network.  It should also result in a print out of the IP address assignments for all of the nodes in the network.
+
+Q1:  What were the min/avg/max delays?  163.598000/301.517333/579.652000
+
+Q2:  Were any packets lost (Y/N)?  If so, how many?  Yes. 51.
+
+Test 2:
+
+mininet> bipartite_topo.py -n 3 -b 10, -d 20 -l 10 -q 10
+mininet> h1 ./iperf.sh h4
+
+The first command should result in a ping test between the 12 nodes that are attached to the six switches in the network.  It should also result in a print out of the IP address assignments for all of the nodes in the network.  The second command should result in an iperf test between 2 nodes that are connected by 2 different switches (the actual locations of h1 and h4 doesn't matter).
+
+Q1:  What were the min/avg/max delays?  162.782000/271.864538/413.473000
+
+Q2:  Were any packets lost (Y/N)?  If so, how many?  Yes. 53.
+
+Q3:  What was the throughput achieved in the IPERF test?
+     Very few packets appear to be getting through, due to the high loss from going through a lot of links with a high loss probability. If this were allowed to finish the throughput would likely be in the single digits of Kbps. 
