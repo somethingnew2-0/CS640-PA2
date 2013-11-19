@@ -103,8 +103,10 @@ def perf( net, hosts=None ):
 def perfSetup( net ):
     "Set up iperf servers on all hosts"
     hosts = net.hosts
-    for node in hosts:
-        node.cmd('iperf -s -w 16m -p 5001 -i 1 > iperf-recv.txt &')
+    for node in hosts[:-1]:
+        node.cmd('iperf -s -w 16m -p 5001 -i 1 >> iperf-recv.txt &')
+        node.cmd('echo "" > iperf-recv.txt')
+    hosts[-1].cmd('iperf -s -w 16m -p 5001 -i 1 >> iperf-recv.txt &')
 
 def perfTakedown( net ):
     "kill all iperf servers running"
