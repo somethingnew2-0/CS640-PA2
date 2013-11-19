@@ -14,6 +14,12 @@ import signal
 from argparse import ArgumentParser
 from time import sleep
 
+totalRTT = 0
+minRTT = -1
+maxRTT = -1
+numRTT = 0
+lostPacket = 0
+
 class BipartiteTopo(Topo):
     # Bipartite topology
     def __init__(self, n, bw, delay, maxq, loss):
@@ -33,6 +39,40 @@ class BipartiteTopo(Topo):
         for i in range(n):
             hosts.append(self.addHost('h'+str(i+1)))
             self.addLink(switches[i/2], hosts[i], bw=bw, delay=delay, max_queue_size=maxq, loss=loss)
+
+def _parsePing( pingOutput, nodeName ):
+    if "100% packet loss" in pingOutput:
+        output('X ')
+        global lostPacket
+        lostPacket += 1
+    else:
+        output(nodeName + ' ')
+        m = re.search('mdev = (.+?)/', pingOutput)
+        if m:
+            rtt = float(m.group(1))
+            global totalRTT, minRTT, maxRTT, numRTT
+            totalRTT += rtt
+            numRTT += 1
+            if rtt < minRTT or minRTT == -1:
+                minRTT = rtt
+            if rtt > maxRTT:
+                maxRTT = rtt
+        else:
+            output('error')
+
+def pingNet( net ):
+    """Ping between all specified hosts. """
+    hosts = net.hosts
+    output('Ping All:\n')
+    for node in hosts[:-1]:   
+        output('%s -> ' % node.name )
+        for dest in hosts:
+            if hosts.index(node) < hosts.index(dest):
+                result = node.cmd('ping -c 1 -W 1 %s' % dest.IP())
+                _parsePing( result, dest.name)
+        output('\n')
+    output('Results: min/avg/max = %f/%f/%f\n' % (minRTT,totalRTT/numRTT,maxRTT) )
+    output('%i packets lost during ping test\n' % lostPacket)
 
 def dumpLinks( topo ):
     "Dump the link connections and their bandwidths."
@@ -158,7 +198,7 @@ def test():
     #for switch in net.switches:
     #    switch.setIP('10.1.0.'+str(net.switches.index(switch)+1))
     net.start()
-    net.pingAll()
+    pingNet(net)
     dumpLinks(net.topo)
     dumpNetAddresses(net)
     perfSetup(net)
