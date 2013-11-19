@@ -1,6 +1,8 @@
 CS640-PA2
 =========
 
+Created by: Peter Collins (pcollins) & Cory Groom (groom)
+
 #Mininet and Bufferbloat
 
 ##Background
